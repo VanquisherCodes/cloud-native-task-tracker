@@ -6,13 +6,7 @@ from pydantic import BaseModel, Field
 from pymongo import MongoClient
 from bson import ObjectId
 
-# =========================
-# MongoDB configuration
-# =========================
 
-# For now:
-# - When running locally without Docker, it will try localhost.
-# - When we use Docker Compose, it will get MONGO_URL from environment.
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
 MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "tasktracker")
 
@@ -21,9 +15,7 @@ db = client[MONGO_DB_NAME]
 tasks_collection = db["tasks"]
 
 
-# =========================
-# Helper functions
-# =========================
+
 
 def bson_to_str(doc: dict) -> dict:
     """
@@ -34,9 +26,6 @@ def bson_to_str(doc: dict) -> dict:
     return doc
 
 
-# =========================
-# Pydantic models
-# =========================
 
 class TaskBase(BaseModel):
     title: str = Field(..., example="Finish DevOps project")
@@ -58,12 +47,10 @@ class Task(TaskBase):
     id: str = Field(..., example="66f1d51ab9a0b3421a5c1234")
 
 
-# =========================
-# FastAPI app
-# =========================
+
 
 app = FastAPI(
-    title="Cloud-Native Task Tracker API",
+    title="Cloud Native Task Tracker API",
     description="A simple task tracker API built with FastAPI and MongoDB.",
     version="1.0.0",
 )
