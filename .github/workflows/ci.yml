@@ -1,4 +1,4 @@
-name: CI
+name: CI-CD
 
 on:
   push:
@@ -6,8 +6,11 @@ on:
   pull_request:
 
 jobs:
-  build-and-test:
+  build-test-push:
     runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: task-tracker-api
 
     steps:
       - name: Checkout code
@@ -28,6 +31,18 @@ jobs:
         run: |
           pytest
 
-      - name: Build Docker image
+      - name: Log in to Docker Hub
         run: |
-          docker build -t task-tracker-api .
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          DOCKER_USER=${{ secrets.DOCKER_USERNAME }}
+
+          # Build image with two tags: latest and commit SHA
+          docker build -t $DOCKER_USER/$IMAGE_NAME:latest -t $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG .
+
+          echo "Pushing Docker images to Docker Hub..."
+          docker push $DOCKER_USER/$IMAGE_NAME:latest
+          docker push $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG
