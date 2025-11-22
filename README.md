@@ -40,3 +40,9 @@ cloud-native-task-tracker/
 │   └── workflows/
 │       └── ci.yml           # GitHub Actions CI pipeline
 └── .gitignore
+
+##How to deploy my application (Docker needs to be installed beforehand!) 
+
+Run the command :
+docker run -p 8000:8000 kanishk1105/task-tracker-api:latest
+
